@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concord - Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #3a3c42 0%, #1e1f22 100%);
+            background-color: #1e1f22;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #f2f3f5;
+        }
+
+        /* Container Principal */
+        .tela-login {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        /* Cartão do Formulário */
+        .caixa-login {
+            background-color: #313338;
+            width: 100%;
+            max-width: 480px;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Logo do Concord */
+        .logo-login {
+            width: 50px;
+            height: 50px;
+            background-color: #5865f2;
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 800;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        .logo-login:hover {
+            transform: scale(1.05);
+        }
+
+        /* Títulos */
+        #titulo {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            color: #f2f3f5;
+            margin-bottom: 8px;
+        }
+
+        #subtitulo {
+            font-size: 14px;
+            text-align: center;
+            color: #b5bac1;
+            margin-bottom: 20px;
+        }
+
+        /* Grupo de Inputs */
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Esconde o campo de usuário por padrão (modo Login) */
+        #campos-cadastro {
+            display: none; 
+            flex-direction: column;
+        }
+
+        /* Labels */
+        label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #b5bac1;
+            margin-bottom: 8px;
+            margin-top: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Entradas de Texto */
+        input {
+            background-color: #1e1f22;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            padding: 10px 12px;
+            font-size: 15px;
+            color: #f2f3f5;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input::placeholder {
+            color: #87898c;
+        }
+
+        input:focus {
+            border-color: #5865f2;
+            box-shadow: 0 0 0 1px #5865f2;
+        }
+
+        /* Botão Principal */
+        .botao-login {
+            margin-top: 24px;
+            background-color: #5865f2;
+            color: #ffffff;
+            border: none;
+            border-radius: 3px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.17s ease;
+        }
+
+        .botao-login:hover {
+            background-color: #4752c4;
+        }
+
+        .botao-login:active {
+            background-color: #3c45a5;
+        }
+
+        /* Alternar entre Login / Cadastro */
+        .alternar {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #949ba4;
+        }
+
+        #alternar {
+            background: none;
+            border: none;
+            color: #00a8fc;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 4px;
+        }
+
+        #alternar:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tela-login">
+
+        <div class="caixa-login">
+
+            <div class="logo-login">
+                C
+            </div>
+
+            <h1 id="titulo">Bem-vindo ao Concord</h1>
+
+            <p id="subtitulo">
+                Entre na sua conta para continuar
+            </p>
+
+            <form id="formulario" method="POST" action="/login">
+                <!-- CAMPOS DE CADASTRO -->
+                <div id="campos-cadastro">
+                    <label for="usuario">Nome de usuário</label>
+                    <input
+                        type="text"
+                        id="usuario"
+                        name="usuario"
+                        placeholder="Escolha seu nome de usuário"
+                    >
+                </div>
+
+                <!-- EMAIL -->
+                <div class="campo-grupo">
+                    <label for="email">E-mail</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="seu@email.com"
+                        required
+                    >
+                </div>
+
+                <!-- SENHA (Corrigido: adicionado name="senha") -->
+                <div class="campo-grupo">
+                    <label for="senha">Senha</label>
+                    <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        placeholder="Digite sua senha"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="botao-login" id="botao-submit">
+                    Entrar
+                </button>
+            </form>
+
+            <p class="alternar">
+                <span id="texto-alternar">Ainda não possui uma conta?</span>
+                <button type="button" id="alternar">
+                    Criar conta
+                </button>
+            </p>
+
+        </div>
+
+    </div>
+
+    <script>
+        let modoCadastro = false;
+
+        const formulario = document.getElementById('formulario');
+        const camposCadastro = document.getElementById('campos-cadastro');
+        const titulo = document.getElementById('titulo');
+        const subtitulo = document.getElementById('subtitulo');
+        const botaoSubmit = document.getElementById('botao-submit');
+        const botaoAlternar = document.getElementById('alternar');
+        const textoAlternar = document.getElementById('texto-alternar');
+
+        botaoAlternar.addEventListener('click', () => {
+            modoCadastro = !modoCadastro;
+
+            if (modoCadastro) {
+                formulario.action = '/cadastrar'; // Redireciona envio para /cadastrar
+                camposCadastro.style.display = 'flex';
+                titulo.textContent = 'Criar uma conta';
+                subtitulo.textContent = 'Estamos ansiosos para ter você conosco!';
+                botaoSubmit.textContent = 'Continuar';
+                textoAlternar.textContent = 'Já tem uma conta?';
+                botaoAlternar.textContent = 'Entrar';
+            } else {
+                formulario.action = '/login'; // Redireciona envio para /login
+                camposCadastro.style.display = 'none';
+                titulo.textContent = 'Bem-vindo ao Concord';
+                subtitulo.textContent = 'Entre na sua conta para continuar';
+                botaoSubmit.textContent = 'Entrar';
+                textoAlternar.textContent = 'Ainda não possui uma conta?';
+                botaoAlternar.textContent = 'Criar conta';
+            }
+        });
+    </script>
+</body>
+</html>

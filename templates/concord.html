@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concord - App</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #313338;
+            color: #f2f3f5;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* BARRA LATERAL ESQUERDA */
+        .sidebar-canais {
+            width: 240px;
+            background-color: #2b2d31;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            flex-shrink: 0;
+        }
+
+        .conteudo-canais {
+            padding: 16px 8px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .titulo-servidor {
+            font-weight: 700;
+            font-size: 16px;
+            padding: 0 8px 12px 8px;
+            border-bottom: 1px solid #1f2023;
+            margin-bottom: 16px;
+            color: #f2f3f5;
+        }
+
+        /* ESTILOS DE CATEGORIAS E CANAIS DE TEXTO */
+        .categoria-canal {
+            font-size: 12px;
+            font-weight: 700;
+            color: #949ba4;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 8px 4px 8px;
+        }
+
+        .item-canal {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            margin: 2px 0;
+            border-radius: 4px;
+            color: #949ba4;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .item-canal:hover {
+            background-color: #35373c;
+            color: #dbdee1;
+        }
+
+        .item-canal.ativo {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+
+        .icone-canal {
+            font-size: 18px;
+            color: #80848e;
+        }
+
+        /* ESTILOS DOS CANAIS DE VOZ */
+        .item-canal-voz {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            margin: 2px 0;
+            border-radius: 4px;
+            color: #949ba4;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+            transition: background-color 0.15s, color 0.15s;
+        }
+
+        .item-canal-voz:hover {
+            background-color: #35373c;
+            color: #dbdee1;
+        }
+
+        .item-canal-voz.conectado {
+            background-color: #23a55a;
+            color: white !important;
+        }
+
+        /* ESTILO DOS MEMBROS DENTRO DA CHAMADA DE VOZ */
+        .lista-membros-voz {
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 2px;
+            margin-bottom: 6px;
+        }
+
+        .membro-voz-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #dbdee1;
+        }
+
+        .membro-voz-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .avatar-voz {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* PAINEL DO USUÁRIO LOGADO */
+        .painel-usuario {
+            background-color: #232428;
+            height: 52px;
+            padding: 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .perfil-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .perfil-container:hover {
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        .avatar-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .info-usuario {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            line-height: 1.2;
+        }
+
+        .nome-usuario {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f2f3f5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-usuario {
+            font-size: 12px;
+            color: #949ba4;
+        }
+
+        .botoes-acao {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-icone {
+            background: none;
+            border: none;
+            color: #b5bac1;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .btn-icone:hover {
+            color: #dbdee1;
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        .btn-icone.mutado {
+            color: #f23f43;
+            background-color: rgba(242, 63, 67, 0.15);
+        }
+
+        /* ÁREA CENTRAL DO CHAT */
+        .area-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #313338;
+            height: 100vh;
+        }
+
+        .chat-header {
+            height: 48px;
+            border-bottom: 1px solid #1f2023;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-weight: 700;
+            font-size: 16px;
+            gap: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .chat-mensagens {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ITEM DE MENSAGEM DO DISCORD */
+        .msg-item {
+            display: flex;
+            gap: 16px;
+        }
+
+        .msg-item:hover {
+            background-color: rgba(2, 2, 2, 0.08);
+            margin: -2px -16px;
+            padding: 2px 16px;
+        }
+
+        .msg-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .msg-conteudo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .msg-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .msg-autor {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f2f3f5;
+        }
+
+        .msg-data {
+            font-size: 12px;
+            color: #949ba4;
+        }
+
+        .msg-texto {
+            font-size: 15px;
+            color: #dbdee1;
+            margin-top: 4px;
+            line-height: 1.375rem;
+            word-break: break-word;
+        }
+
+        /* CAMPO DE ENVIAR MENSAGEM */
+        .chat-input-container {
+            padding: 0 16px 24px 16px;
+        }
+
+        .chat-form {
+            background-color: #383a40;
+            border-radius: 8px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            height: 44px;
+        }
+
+        .chat-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #f2f3f5;
+            font-size: 15px;
+        }
+
+        .chat-input::placeholder {
+            color: #87898c;
+        }
+
+        /* BARRA LATERAL DIREITA */
+        .sidebar-membros {
+            width: 240px;
+            background-color: #2b2d31;
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-left: 1px solid #1f2023;
+            flex-shrink: 0;
+        }
+
+        .titulo-membros {
+            font-size: 12px;
+            font-weight: 700;
+            color: #949ba4;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 8px 8px 8px;
+        }
+
+        .item-membro {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .item-membro:hover {
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        .nome-membro {
+            font-size: 14px;
+            font-weight: 500;
+            color: #949ba4;
+        }
+
+        .item-membro:hover .nome-membro {
+            color: #f2f3f5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. BARRA LATERAL ESQUERDA -->
+    <div class="sidebar-canais">
+        <div class="conteudo-canais">
+            <div class="titulo-servidor">Concord Central</div>
+
+            <!-- CANAIS DE TEXTO -->
+            <div class="categoria-canal">CANAIS DE TEXTO</div>
+            <div class="item-canal ativo">
+                <span class="icone-canal">#</span> geral
+            </div>
+
+            <!-- CANAIS DE VOZ -->
+            <div class="categoria-canal" style="margin-top: 16px;">CANAIS DE VOZ</div>
+
+            <div class="canal-voz-wrapper">
+                <div class="item-canal-voz" onclick="conectarVoz('chamada_1')" id="btn-chamada_1">🔊 Chamada 1</div>
+                <div class="lista-membros-voz" id="membros-chamada_1"></div>
+            </div>
+
+            <div class="canal-voz-wrapper">
+                <div class="item-canal-voz" onclick="conectarVoz('chamada_2')" id="btn-chamada_2">🔊 Chamada 2</div>
+                <div class="lista-membros-voz" id="membros-chamada_2"></div>
+            </div>
+
+            <div class="canal-voz-wrapper">
+                <div class="item-canal-voz" onclick="conectarVoz('chamada_3')" id="btn-chamada_3">🔊 Chamada 3</div>
+                <div class="lista-membros-voz" id="membros-chamada_3"></div>
+            </div>
+
+            <div class="canal-voz-wrapper">
+                <div class="item-canal-voz" onclick="conectarVoz('chamada_4')" id="btn-chamada_4">🔊 Chamada 4</div>
+                <div class="lista-membros-voz" id="membros-chamada_4"></div>
+            </div>
+
+            <div class="canal-voz-wrapper">
+                <div class="item-canal-voz" onclick="conectarVoz('chamada_5')" id="btn-chamada_5">🔊 Chamada 5</div>
+                <div class="lista-membros-voz" id="membros-chamada_5"></div>
+            </div>
+
+            <!-- CONTAINER ONDE OS ÁUDIOS SERÃO TOCADOS AUTOMATICAMENTE -->
+            <div id="audios-container"></div>
+        </div>
+
+        <!-- PAINEL DO USUÁRIO LOGADO -->
+        <div class="painel-usuario">
+            <div class="perfil-container">
+                <img src="{{ usuario.foto_perfil }}" alt="Avatar" class="avatar-img">
+                <div class="info-usuario">
+                    <span class="nome-usuario">{{ usuario.nome }}</span>
+                    <span class="status-usuario">Disponível</span>
+                </div>
+            </div>
+
+            <div class="botoes-acao">
+                <button class="btn-icone mutado" title="Desmutar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6.7 6.7a1 1 0 0 1 1.4-1.4l11.2 11.2a1 1 0 0 1-1.4 1.4L6.7 6.7zM12 4a3 3 0 0 0-3 3v4c0 .32.05.63.14.92l5.78 5.78A5 5 0 0 0 17 12a1 1 0 1 0-2 0 3 3 0 0 1-3 3c-.32 0-.63-.05-.92-.14L9.3 16.08c.84.58 1.84.92 2.7 1v2.92h-2a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2V17.08A7 7 0 0 0 19 12a1 1 0 1 0-2 0 5 5 0 0 1-5 5c-.3 0-.6-.03-.88-.08l1.45-1.45c.14.02.29.03.43.03a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3z"/>
+                    </svg>
+                </button>
+                <button class="btn-icone" title="Ensurdecer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3a9 9 0 0 0-9 9v7a3 3 0 0 0 3 3h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-2a7 7 0 1 1 14 0v2h-2a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3a3 3 0 0 0 3-3v-7a9 9 0 0 0-9-9z"/>
+                    </svg>
+                </button>
+                <!-- BOTÃO DE CONFIGURAÇÕES (ENGRENAGEM) -->
+                <button class="btn-icone" title="Configurações do Perfil" onclick="window.location.href='/perfil'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 1 1 0-7.2 3.6 3.6 0 0 1 0 7.2z"/>
+                    </svg>
+                </button>
+
+                <!-- BOTÃO DE LOGOUT / SAIR -->
+                <button class="btn-icone" title="Sair / Logout" onclick="window.location.href='/logout'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 13H10A1 1 0 0 1 10 11H18A1 1 0 0 1 18 13ZM13.71 6.29A1 1 0 0 1 15.12 4.88L20.71 10.47A2 2 0 0 1 20.71 13.29L15.12 18.88A1 1 0 0 1 13.71 17.47L18.18 13H3A1 1 0 0 1 3 11H18.18L13.71 6.29Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ÁREA CENTRAL DO CHAT -->
+    <div class="area-chat">
+        
+        <div class="chat-header">
+            <span style="color: #80848e; font-size: 20px;">#</span> geral
+        </div>
+    
+        <!-- MENSAGENS -->
+        <div class="chat-mensagens" id="chatMensagens">
+            {% if mensagens %}
+                {% for msg in mensagens %}
+                    <div class="msg-item">
+                        <img src="{{ msg.autor_foto }}" alt="Avatar" class="msg-avatar">
+                        <div class="msg-conteudo">
+                            <div class="msg-header">
+                                <span class="msg-autor">{{ msg.autor_nome }}</span>
+                                <span class="msg-data">{{ msg.data_envio }}</span>
+                            </div>
+                            <div class="msg-texto">{{ msg.conteudo }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="color: #949ba4; text-align: center; margin-top: 40px;">
+                    Nenhuma mensagem enviada ainda. Seja o primeiro a mandar um "Oi"! 👋
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- CAMPO DE ENVIAR MENSAGEM -->
+        <div class="chat-input-container">
+            <form action="/enviar_mensagem" method="POST" class="chat-form">
+                <input 
+                    type="text" 
+                    name="mensagem" 
+                    class="chat-input" 
+                    placeholder="Conversar em #geral" 
+                    autocomplete="off" 
+                    required
+                >
+            </form>
+        </div>
+
+    </div>
+
+    <!-- 3. BARRA LATERAL DIREITA -->
+    <div class="sidebar-membros">
+        <div class="titulo-membros">Membros — {{ membros|length }}</div>
+        {% for membro in membros %}
+            <div class="item-membro">
+                <img src="{{ membro.foto_perfil }}" alt="Avatar" class="avatar-img">
+                <span class="nome-membro">{{ membro.nome }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Rola automaticamente o chat para a última mensagem ao carregar a página
+        const chatBox = document.getElementById('chatMensagens');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    </script>
+
+    <!-- BIBLIOTECA SOCKET.IO CLIENTE -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <script>
+        const socket = io();
+        let canalVozAtual = null;
+        let localStream = null;
+        const peerConnections = {};
+
+        // Dados do usuário logado trazidos do Flask
+        const usuarioAtual = {
+            nome: "{{ usuario.nome }}",
+            foto: "{{ usuario.foto_perfil }}"
+        };
+
+        const rtcConfig = {
+            iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+        };
+
+        async function conectarVoz(canal) {
+            if (canalVozAtual === canal) {
+                desconectarVoz();
+                return;
+            }
+
+            if (canalVozAtual) {
+                desconectarVoz();
+            }
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Erro de Segurança: O microfone só funciona acessando por 'localhost' ou 'HTTPS'!");
+                return;
+            }
+
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                canalVozAtual = canal;
+
+                document.getElementById(`btn-${canal}`).classList.add('conectado');
+
+                // Adiciona você mesmo visualmente na chamada
+                adicionarMembroNaTela(canal, socket.id, usuarioAtual.nome, usuarioAtual.foto);
+
+                // Envia para o backend notificando que entrou, junto com seu nome e foto
+                socket.emit('entrar_canal_voz', { 
+                    canal: canal, 
+                    nome: usuarioAtual.nome, 
+                    foto: usuarioAtual.foto 
+                });
+
+            } catch (err) {
+                console.error("Erro detalhado do microfone:", err);
+
+                if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                    alert('Nenhum microfone foi detectado no seu computador!');
+                } else if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    alert('Você bloqueou a permissão do microfone no navegador.');
+                } else {
+                    alert(`Erro ao acessar microfone: ${err.message}`);
+                }
+            }
+        }
+
+        function desconectarVoz() {
+            if (!canalVozAtual) return;
+
+            socket.emit('sair_canal_voz', { canal: canalVozAtual });
+
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+
+            for (let sid in peerConnections) {
+                peerConnections[sid].close();
+                delete peerConnections[sid];
+            }
+
+            document.getElementById(`btn-${canalVozAtual}`).classList.remove('conectado');
+            
+            // Remove sua própria foto da lista visual do canal
+            const meuCard = document.getElementById(`membro-voz-${socket.id}`);
+            if (meuCard) meuCard.remove();
+
+            canalVozAtual = null;
+            document.getElementById('audios-container').innerHTML = '';
+        }
+
+        // Função auxiliar para criar a fotinha e nome abaixo do canal de voz
+        function adicionarMembroNaTela(canal, sid, nome, foto) {
+            const container = document.getElementById(`membros-${canal}`);
+            if (!container) return;
+
+            if (document.getElementById(`membro-voz-${sid}`)) return;
+
+            const div = document.createElement('div');
+            div.className = 'membro-voz-item';
+            div.id = `membro-voz-${sid}`;
+            div.innerHTML = `
+                <img src="${foto}" class="avatar-voz" alt="Avatar">
+                <span>${nome}</span>
+            `;
+            container.appendChild(div);
+        }
+
+        // Eventos Socket.IO para voz
+        socket.on('membros_no_canal', (data) => {
+            data.membros.forEach(membro => {
+                adicionarMembroNaTela(data.canal, membro.sid, membro.nome, membro.foto);
+                iniciarPeerConnection(membro.sid, true);
+            });
+        });
+
+        socket.on('usuario_entrou_voz', (data) => {
+            adicionarMembroNaTela(data.canal, data.sid, data.nome, data.foto);
+            iniciarPeerConnection(data.sid, false);
+        });
+
+        socket.on('usuario_saiu_voz', (data) => {
+            if (peerConnections[data.sid]) {
+                peerConnections[data.sid].close();
+                delete peerConnections[data.sid];
+            }
+            const cardMembro = document.getElementById(`membro-voz-${data.sid}`);
+            if (cardMembro) cardMembro.remove();
+
+            const audioEl = document.getElementById(`audio-${data.sid}`);
+            if (audioEl) audioEl.remove();
+        });
+
+        // Eventos WebRTC
+        socket.on('oferta_webrtc', async (data) => {
+            const pc = criarPeerConnection(data.de_sid);
+            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            socket.emit('resposta_webrtc', { sdp: answer, para_sid: data.de_sid });
+        });
+
+        socket.on('resposta_webrtc', async (data) => {
+            const pc = peerConnections[data.de_sid];
+            if (pc) {
+                await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+            }
+        });
+
+        socket.on('ice_candidate', async (data) => {
+            const pc = peerConnections[data.de_sid];
+            if (pc && data.candidate) {
+                await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+            }
+        });
+
+        function criarPeerConnection(sid) {
+            const pc = new RTCPeerConnection(rtcConfig);
+            peerConnections[sid] = pc;
+
+            if (localStream) {
+                localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+            }
+
+            pc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit('ice_candidate', { candidate: event.candidate, para_sid: sid });
+                }
+            };
+
+            pc.ontrack = (event) => {
+                let audioEl = document.getElementById(`audio-${sid}`);
+                if (!audioEl) {
+                    audioEl = document.createElement('audio');
+                    audioEl.id = `audio-${sid}`;
+                    audioEl.autoplay = true;
+                    document.getElementById('audios-container').appendChild(audioEl);
+                }
+                audioEl.srcObject = event.streams[0];
+            };
+
+            return pc;
+        }
+
+        async function iniciarPeerConnection(sid, criarOferta) {
+            const pc = criarPeerConnection(sid);
+
+            if (criarOferta) {
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                socket.emit('oferta_webrtc', { sdp: offer, para_sid: sid });
+            }
+        }
+    </script>
+</body>
+</html>

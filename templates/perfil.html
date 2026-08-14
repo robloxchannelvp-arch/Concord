@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concord - Editar Perfil</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=gg+sans:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'gg sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #313338;
+            color: #f2f3f5;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .perfil-card {
+            background-color: #2b2d31;
+            width: 100%;
+            max-width: 480px;
+            padding: 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .perfil-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #1f2023;
+        }
+
+        .avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #5865f2;
+        }
+
+        .titulo-secao h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .titulo-secao p {
+            font-size: 13px;
+            color: #949ba4;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #b5bac1;
+            text-transform: uppercase;
+        }
+
+        input {
+            background-color: #1e1f22;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 12px;
+            color: #f2f3f5;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border: 1px solid #5865f2;
+        }
+
+        input:disabled {
+            color: #80848e;
+            cursor: not-allowed;
+        }
+
+        .botoes-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn-cancelar {
+            color: #f2f3f5;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 16px;
+            border-radius: 4px;
+            transition: background-color 0.15s;
+        }
+
+        .btn-cancelar:hover {
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        .btn-salvar {
+            background-color: #248046;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.15s;
+        }
+
+        .btn-salvar:hover {
+            background-color: #1a6334;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="perfil-card">
+        <div class="perfil-header">
+            <img id="imgPreview" src="{{ usuario.foto_perfil }}" alt="Avatar" class="avatar-preview">
+            <div class="titulo-secao">
+                <h2>Perfil do Usuário</h2>
+                <p>Personalize como os outros te veem</p>
+            </div>
+        </div>
+
+        <form action="/salvar_perfil" method="POST" style="display: flex; flex-direction: column; gap: 16px;">
+            
+            <div class="campo-grupo">
+                <label>E-mail (Não pode ser alterado)</label>
+                <input type="email" value="{{ usuario.email }}" disabled>
+            </div>
+
+            <div class="campo-grupo">
+                <label>Nome de Exibição</label>
+                <input type="text" name="nome" value="{{ usuario.nome }}" required autocomplete="off">
+            </div>
+
+            <div class="campo-grupo">
+                <label>Link da Foto de Perfil (URL da Imagem)</label>
+                <input 
+                    type="url" 
+                    id="inputFoto" 
+                    name="foto_perfil" 
+                    value="{{ usuario.foto_perfil }}" 
+                    placeholder="https://exemplo.com/minha-foto.png"
+                    oninput="atualizarPreview()"
+                >
+            </div>
+
+            <div class="botoes-container">
+                <a href="/concord.html" class="btn-cancelar">Voltar</a>
+                <button type="submit" class="btn-salvar">Salvar Alterações</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // Atualiza a imagem de prévia enquanto o usuário digita o link
+        function atualizarPreview() {
+            const url = document.getElementById('inputFoto').value;
+            const imgPreview = document.getElementById('imgPreview');
+            
+            if (url && url.trim() !== "") {
+                imgPreview.src = url;
+            } else {
+                imgPreview.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+            }
+        }
+    </script>
+</body>
+</html>
